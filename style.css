@@ -11,7 +11,7 @@
     -moz-column-gap: 0;
     -webkit-column-gap: 0;
     column-gap: 0;
-    font: 1em/1.67 'Open Sans', Arial, Sans-serif;
+    font: 1em/1.67 Arial, Sans-serif;
 }
 
 .gallery .view-image {
