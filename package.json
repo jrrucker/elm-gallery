@@ -1,0 +1,26 @@
+{
+    "name": "elm-gallery",
+    "version": "0.0.1",
+    "description": "Elm Gallery",
+    "repository": {
+      "type": "git",
+      "url": "https://git.url"
+    },
+    "scripts": {
+      "elm-setup": "elm-package install",
+      "elm-setup-auto": "elm-package install -y",
+      "host": "elm-live src/Main.elm --debug --output=elm.js --open",
+      "start": "npm run host"
+    },
+    "devDependencies": {
+      "elm": "^0.18.0",
+      "elm-css": "^0.6.0",
+      "elm-live": "^2.7.4"
+    },
+    "license": {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    },
+    "private": true
+  }
+  
