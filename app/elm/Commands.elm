@@ -16,14 +16,14 @@ loadData =
 
 loadImages : Cmd Msg
 loadImages =
-    Http.get "http://localhost:8000/images.json" imagesDecoder
+    Http.get "images.json" imagesDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Messages.OnLoadImages
 
 
 loadPeople : Cmd Msg
 loadPeople =
-    Http.get "Http://localhost:8000/people.json" peopleDecoder
+    Http.get "people.json" peopleDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Messages.OnLoadPeople
 
