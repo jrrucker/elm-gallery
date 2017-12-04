@@ -18,17 +18,17 @@ view model =
         [ page model ]
 
 
-remoteDataView : (data -> Html Msg) -> WebData data -> Html Msg
-remoteDataView subview data =
-    case data of
+remoteDataView : (( List Image, List Person ) -> Html Msg) -> Model -> Html Msg
+remoteDataView subview model =
+    case (RemoteData.append model.allImages model.allPeople) of
         RemoteData.NotAsked ->
             loadingView
 
         RemoteData.Loading ->
             loadingView
 
-        RemoteData.Success model ->
-            subview model
+        RemoteData.Success data ->
+            subview data
 
         RemoteData.Failure err ->
             errorView err
@@ -38,34 +38,38 @@ page : Model -> Html Msg
 page model =
     case model.route of
         Routing.ImageRoute id ->
-            (getImage model id)
-                |> remoteDataView
-                    (\maybeImage ->
-                        case maybeImage of
-                            Just image ->
-                                (getPeople model image)
-                                    |> remoteDataView (imageView image)
+            remoteDataView
+                (\( allImages, allPeople ) ->
+                    case (getImage allImages id) of
+                        Just image ->
+                            (getPeople allPeople image)
+                                |> imageView image
 
-                            Nothing ->
-                                imageNotFoundView
-                    )
+                        Nothing ->
+                            imageNotFoundView
+                )
+                model
 
         Routing.PersonRoute id ->
-            (getPerson model id)
-                |> remoteDataView
-                    (\maybePerson ->
-                        case maybePerson of
-                            Just person ->
-                                model.allImages
-                                    |> RemoteData.map (getImagesOfPerson person)
-                                    |> remoteDataView galleryView
+            remoteDataView
+                (\( allImages, allPeople ) ->
+                    case (getPerson allPeople id) of
+                        Just person ->
+                            allImages
+                                |> getImagesOfPerson person
+                                |> galleryView
 
-                            Nothing ->
-                                personNotFoundView
-                    )
+                        Nothing ->
+                            personNotFoundView
+                )
+                model
 
         Routing.HomeRoute ->
-            remoteDataView galleryView model.allImages
+            remoteDataView
+                (\( allImages, allPeople ) ->
+                    galleryView allImages
+                )
+                model
 
         Routing.PersonNotFound ->
             personNotFoundView
@@ -120,26 +124,25 @@ notFoundView msg =
 -- Helpers
 
 
-getImage : Model -> Int -> WebData (Maybe Image)
-getImage model id =
-    model.allImages
-        |> RemoteData.map (List.filter (\image -> image.id == id))
-        |> RemoteData.map (List.head)
+getImage : List Image -> Int -> Maybe Image
+getImage images id =
+    images
+        |> List.filter (\image -> image.id == id)
+        |> List.head
 
 
-getPerson : Model -> Int -> WebData (Maybe Person)
-getPerson model id =
-    model.allPeople
-        |> RemoteData.map (List.filter (\person -> person.id == id))
-        |> RemoteData.map (List.head)
+getPerson : List Person -> Int -> Maybe Person
+getPerson allPeople id =
+    allPeople
+        |> List.filter (\person -> person.id == id)
+        |> List.head
 
 
-getPeople : Model -> Image -> WebData (List Person)
-getPeople model image =
-    model.allPeople
-        |> RemoteData.map (List.filter (\person -> (List.member person.id image.people)))
+getPeople : List Person -> Image -> List Person
+getPeople allPeople image =
+    List.filter (\person -> (List.member person.id image.people)) allPeople
 
 
 getImagesOfPerson : Person -> List Image -> List Image
-getImagesOfPerson person images =
-    List.filter (\image -> (List.member person.id image.people)) images
+getImagesOfPerson person allImages =
+    List.filter (\image -> (List.member person.id image.people)) allImages
