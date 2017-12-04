@@ -9,10 +9,16 @@ import Subscriptions exposing (..)
 import Navigation exposing (Location)
 import View exposing (..)
 import Commands exposing (..)
-import Routing
+import Routing exposing (Route)
+import RemoteData exposing (WebData)
 
 
--- Model
+initialModel : Route -> Model
+initialModel route =
+    { route = route
+    , allImages = RemoteData.Loading
+    , allPeople = RemoteData.Loading
+    }
 
 
 init : Location -> ( Model, Cmd Msg )

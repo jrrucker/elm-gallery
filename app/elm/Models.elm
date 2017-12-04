@@ -10,11 +10,3 @@ type alias Model =
     , allImages : WebData (List Image)
     , allPeople : WebData (List Person)
     }
-
-
-initialModel : Route -> Model
-initialModel route =
-    { route = route
-    , allImages = RemoteData.Loading
-    , allPeople = RemoteData.Loading
-    }
