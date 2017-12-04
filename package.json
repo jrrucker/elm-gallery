@@ -1,10 +1,10 @@
 {
   "name": "elm-gallery",
   "version": "0.0.1",
-  "description": "Elm Gallery",
+  "description": "An image gallery powered by Elm.",
   "repository": {
     "type": "git",
-    "url": "https://git.url"
+    "url": "https://github.com/jrrucker/elm-gallery.git"
   },
   "scripts": {
     "start": "brunch watch --server",
