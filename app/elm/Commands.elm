@@ -1,31 +1,25 @@
 module Commands exposing (..)
 
 import Http
-import Messages exposing (Msg)
 import Json.Decode as Decode
 import Json.Decode.Extra as DecodeExtra
 import Json.Decode.Pipeline exposing (decode, required)
 import Images.Models exposing (Image, Person, ImagesContainerModel)
-import RemoteData
+import RemoteData exposing (WebData)
 
 
-loadData : Cmd Msg
-loadData =
-    Cmd.batch [ loadImages, loadPeople ]
-
-
-loadImages : Cmd Msg
-loadImages =
+loadImages : (WebData (List Image) -> msg) -> Cmd msg
+loadImages msg =
     Http.get "images.json" imagesDecoder
         |> RemoteData.sendRequest
-        |> Cmd.map Messages.OnLoadImages
+        |> Cmd.map msg
 
 
-loadPeople : Cmd Msg
-loadPeople =
+loadPeople : (WebData (List Person) -> msg) -> Cmd msg
+loadPeople msg =
     Http.get "people.json" peopleDecoder
         |> RemoteData.sendRequest
-        |> Cmd.map Messages.OnLoadPeople
+        |> Cmd.map msg
 
 
 peopleDecoder : Decode.Decoder (List Person)
