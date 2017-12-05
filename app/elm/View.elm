@@ -1,26 +1,16 @@
 module View exposing (..)
 
 import Http
-import Models exposing (..)
-import Routing
-import Messages exposing (Msg)
 import Images.Models exposing (Image, Person)
 import Images.CardView exposing (cardView)
-import Images.ImageView exposing (imageView)
 import Html exposing (Html, div, text, program)
 import Html.Attributes exposing (class)
 import RemoteData exposing (WebData)
 
 
-view : Model -> Html Msg
-view model =
-    div []
-        [ page model ]
-
-
-remoteDataView : (( List Image, List Person ) -> Html Msg) -> Model -> Html Msg
-remoteDataView subview model =
-    case (RemoteData.append model.allImages model.allPeople) of
+remoteDataView : (a -> Html msg) -> WebData a -> Html msg
+remoteDataView subview webData =
+    case webData of
         RemoteData.NotAsked ->
             loadingView
 
@@ -34,68 +24,21 @@ remoteDataView subview model =
             errorView err
 
 
-page : Model -> Html Msg
-page model =
-    case model.route of
-        Routing.ImageRoute id ->
-            remoteDataView
-                (\( allImages, allPeople ) ->
-                    case (getImage allImages id) of
-                        Just image ->
-                            (getPeople allPeople image)
-                                |> imageView image
-
-                        Nothing ->
-                            imageNotFoundView
-                )
-                model
-
-        Routing.PersonRoute id ->
-            remoteDataView
-                (\( allImages, allPeople ) ->
-                    case (getPerson allPeople id) of
-                        Just person ->
-                            allImages
-                                |> getImagesOfPerson person
-                                |> galleryView
-
-                        Nothing ->
-                            personNotFoundView
-                )
-                model
-
-        Routing.HomeRoute ->
-            remoteDataView
-                (\( allImages, allPeople ) ->
-                    galleryView allImages
-                )
-                model
-
-        Routing.PersonNotFound ->
-            personNotFoundView
-
-        Routing.ImageNotFound ->
-            imageNotFoundView
-
-        Routing.NotFoundRoute ->
-            (notFoundView "Page not found")
-
-
-loadingView : Html Msg
+loadingView : Html msg
 loadingView =
     div
         [ class "loading" ]
         [ text "Loading image data... " ]
 
 
-errorView : Http.Error -> Html Msg
+errorView : Http.Error -> Html msg
 errorView err =
     div
         [ class "error" ]
         [ text ("There was an error... " ++ (toString err)) ]
 
 
-galleryView : List Image -> Html Msg
+galleryView : List Image -> Html msg
 galleryView images =
     div
         [ class "gallery" ]
@@ -104,17 +47,17 @@ galleryView images =
         )
 
 
-imageNotFoundView : Html Msg
+imageNotFoundView : Html msg
 imageNotFoundView =
     (notFoundView "Image not found.")
 
 
-personNotFoundView : Html Msg
+personNotFoundView : Html msg
 personNotFoundView =
     (notFoundView "Person not found.")
 
 
-notFoundView : String -> Html Msg
+notFoundView : String -> Html msg
 notFoundView msg =
     div []
         [ text msg ]
@@ -124,22 +67,22 @@ notFoundView msg =
 -- Helpers
 
 
-getImage : List Image -> Int -> Maybe Image
-getImage images id =
+getImage : Int -> List Image -> Maybe Image
+getImage id images =
     images
         |> List.filter (\image -> image.id == id)
         |> List.head
 
 
-getPerson : List Person -> Int -> Maybe Person
-getPerson allPeople id =
+getPerson : Int -> List Person -> Maybe Person
+getPerson id allPeople =
     allPeople
         |> List.filter (\person -> person.id == id)
         |> List.head
 
 
-getPeople : List Person -> Image -> List Person
-getPeople allPeople image =
+getPeople : Image -> List Person -> List Person
+getPeople image allPeople =
     List.filter (\person -> (List.member person.id image.people)) allPeople
 
 
