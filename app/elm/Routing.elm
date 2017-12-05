@@ -9,8 +9,7 @@ type Route
     = HomeRoute
     | ImageRoute ImageId
     | PersonRoute PersonId
-    | PersonNotFound
-    | ImageNotFound
+    | PersonImageRoute PersonId ImageId
     | NotFoundRoute
 
 
@@ -20,6 +19,7 @@ matchers =
         [ map HomeRoute top
         , map ImageRoute (s "image" </> int)
         , map PersonRoute (s "person" </> int)
+        , map PersonImageRoute (s "person" </> int </> s "image" </> int)
         ]
 
 
@@ -37,3 +37,8 @@ imagePath id =
 personPath : PersonId -> String
 personPath id =
     "#/person/" ++ (toString id)
+
+
+personImagePath : ImageId -> PersonId -> String
+personImagePath imageId personId =
+    "#/person/" ++ (toString personId) ++ "/image/" ++ (toString imageId)
