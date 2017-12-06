@@ -29,7 +29,7 @@ galleryView maybePersonId ( allImages, allPeople ) =
 buildGalleryView : List (Html msg) -> Html msg
 buildGalleryView cards =
     div
-        [ class "gallery" ]
+        [ class "gallery-view" ]
         cards
 
 

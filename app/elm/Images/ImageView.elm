@@ -64,7 +64,7 @@ imageView maybePersonId imageId ( allImages, allPeople ) =
 
 buildImageView : Image -> List Image -> Maybe Person -> List Person -> Html msg
 buildImageView image imagesInGallery maybePerson people =
-    div [ class "image-details" ]
+    div [ class "image-view" ]
         [ renderImage image
         , renderImageDescription image
         , renderPeopleList people

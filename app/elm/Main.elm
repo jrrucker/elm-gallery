@@ -7,6 +7,9 @@ import Commands exposing (loadImages, loadPeople)
 import Routing exposing (Route, parseLocation)
 import RemoteData exposing (WebData)
 import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
+import Svg exposing (svg, use)
+import Svg.Attributes exposing (xlinkHref)
 import Images.Models exposing (Image, Person)
 import Images.ImageView exposing (imageView)
 
@@ -91,10 +94,28 @@ notFoundView =
         [ text "Page not found." ]
 
 
-view : Model -> Html Msg
+view : Model -> Html msg
 view model =
-    div []
-        [ pageView model ]
+    div [ class "elm-gallery" ]
+        [ header
+        , pageView model 
+        ]
+
+header : Html msg
+header =
+    div [ class "header" ]
+        [ icon "home" 
+        , text "Home" 
+        ]
+
+icon : String -> Html msg
+icon symbol =
+    svg
+        [ Svg.Attributes.class "icon" ]
+        [ use 
+            [ xlinkHref ("#" ++ symbol)]
+            []
+        ]
 
 
 pageView : Model -> Html msg

@@ -12,6 +12,11 @@ module.exports = {
             "exposed-modules": ["Main"],
             renderErrors: true,
             parameters: ["--debug", "--yes", "--warn"]
+        },
+        sass: {
+            options: {
+                sourceMapEmbed: true
+            }
         }
     },
     overrides: {
