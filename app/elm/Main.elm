@@ -2,10 +2,11 @@ module Main exposing (..)
 
 import Navigation exposing (Location)
 import View exposing (..)
+import Images.GalleryView exposing (galleryView)
 import Commands exposing (loadImages, loadPeople)
 import Routing exposing (Route, parseLocation)
 import RemoteData exposing (WebData)
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Images.Models exposing (Image, Person)
 import Images.ImageView exposing (imageView)
 
@@ -84,6 +85,12 @@ update msg model =
 -- View
 
 
+notFoundView : Html msg
+notFoundView =
+    div []
+        [ text "Page not found." ]
+
+
 view : Model -> Html Msg
 view model =
     div []
@@ -97,43 +104,24 @@ pageView model =
             RemoteData.append model.allImages model.allPeople
     in
         case model.route of
-            Routing.ImageRoute id ->
+            Routing.ImageRoute imageId ->
                 combinedRequests
-                    |> RemoteData.map (Tuple.mapFirst (getImage id))
-                    |> remoteDataView
-                        (\( maybeImage, allPeople ) ->
-                            case maybeImage of
-                                Just image ->
-                                    imageView image (getPeople image allPeople)
+                    |> remoteDataView (imageView Maybe.Nothing imageId)
 
-                                Nothing ->
-                                    imageNotFoundView
-                        )
-
-            Routing.PersonRoute id ->
+            Routing.PersonRoute personId ->
                 combinedRequests
-                    |> RemoteData.map (Tuple.mapSecond (getPerson id))
-                    |> remoteDataView
-                        (\( allImages, maybePerson ) ->
-                            case maybePerson of
-                                Just person ->
-                                    galleryView (getImagesOfPerson person allImages)
-
-                                Nothing ->
-                                    personNotFoundView
-                        )
+                    |> remoteDataView (galleryView (Maybe.Just personId))
 
             Routing.HomeRoute ->
-                remoteDataView galleryView model.allImages
+                combinedRequests
+                    |> remoteDataView (galleryView Maybe.Nothing)
 
-            Routing.PersonNotFound ->
-                personNotFoundView
-
-            Routing.ImageNotFound ->
-                imageNotFoundView
+            Routing.PersonImageRoute personId imageId ->
+                combinedRequests
+                    |> remoteDataView (imageView (Maybe.Just personId) imageId)
 
             Routing.NotFoundRoute ->
-                (notFoundView "Page not found")
+                notFoundView
 
 
 
