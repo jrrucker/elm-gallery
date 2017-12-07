@@ -29,16 +29,20 @@ parseLocation location =
         |> Maybe.withDefault NotFoundRoute
 
 
-imagePath : ImageId -> String
-imagePath id =
-    "#/image/" ++ (toString id)
+pathFor : Route -> String
+pathFor route =
+    case route of
+        PersonRoute personId ->
+            "#/person/" ++ (toString personId)
 
+        PersonImageRoute imageId personId ->
+            "#/person/" ++ (toString personId) ++ "/image/" ++ (toString imageId)
 
-personPath : PersonId -> String
-personPath id =
-    "#/person/" ++ (toString id)
+        ImageRoute imageId ->
+            "#/image/" ++ (toString imageId)
 
+        HomeRoute ->
+            "#"
 
-personImagePath : ImageId -> PersonId -> String
-personImagePath imageId personId =
-    "#/person/" ++ (toString personId) ++ "/image/" ++ (toString imageId)
+        NotFoundRoute ->
+            "#"

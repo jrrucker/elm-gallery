@@ -4,7 +4,7 @@ import Html exposing (Html, div, img, text, p, strong, span, a)
 import Html.Attributes exposing (src, alt, title, class, href)
 import Images.Models exposing (..)
 import Images.Utils exposing (..)
-import Routing exposing (personPath, imagePath, personImagePath)
+import Routing exposing (Route(..), pathFor)
 
 
 type NavDirection
@@ -104,7 +104,7 @@ renderPerson : Person -> Html msg
 renderPerson person =
     let
         path =
-            personPath person.id
+            pathFor (PersonRoute person.id)
     in
         a
             [ href path ]
@@ -149,12 +149,12 @@ renderImageLink image maybePerson direction =
     case maybePerson of
         Just person ->
             a
-                [ href (personImagePath image.id person.id) ]
+                [ href (pathFor (PersonImageRoute image.id person.id)) ]
                 [ text (toString direction) ]
 
         Nothing ->
             a
-                [ href (imagePath image.id) ]
+                [ href (pathFor (ImageRoute image.id)) ]
                 [ text (toString direction) ]
 
 

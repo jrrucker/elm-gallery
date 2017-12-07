@@ -2,7 +2,7 @@ module Images.GalleryView exposing (galleryView)
 
 import Html exposing (Html, div, a, img, text)
 import Html.Attributes exposing (class, href, src, alt, title)
-import Routing exposing (imagePath, personPath, personImagePath)
+import Routing exposing (Route(..), pathFor)
 import Images.Models exposing (..)
 import Images.Utils exposing (..)
 
@@ -35,25 +35,17 @@ buildGalleryView cards =
 
 cardView : Maybe PersonId -> Image -> Html msg
 cardView maybePersonId image =
-    case maybePersonId of
-        Just personId ->
-            buildCardView
-                (personImagePath image.id personId)
-                image
-
-        Nothing ->
-            buildCardView
-                (imagePath image.id)
-                image
-
-
-buildCardView : String -> Image -> Html msg
-buildCardView path image =
-    a
-        [ class "view-image"
-        , href path
-        ]
-        [ renderThumbnail image ]
+    let
+        path =
+            maybePersonId
+                |> Maybe.map (PersonImageRoute image.id)
+                |> Maybe.withDefault (ImageRoute image.id)
+    in
+        a
+            [ class "view-image"
+            , href (pathFor path)
+            ]
+            [ renderThumbnail image ]
 
 
 renderThumbnail : Image -> Html msg
