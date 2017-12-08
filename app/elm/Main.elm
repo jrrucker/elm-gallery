@@ -6,8 +6,8 @@ import Images.GalleryView exposing (galleryView)
 import Commands exposing (loadImages, loadPeople)
 import Routing exposing (Route, parseLocation)
 import RemoteData exposing (WebData)
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, text, a)
+import Html.Attributes exposing (class, href)
 import Svg exposing (svg, use)
 import Svg.Attributes exposing (xlinkHref)
 import Images.Models exposing (Image, Person)
@@ -98,22 +98,33 @@ view : Model -> Html msg
 view model =
     div [ class "elm-gallery" ]
         [ header
-        , pageView model 
+        , pageView model
         ]
+
 
 header : Html msg
 header =
     div [ class "header" ]
-        [ icon "home" 
-        , text "Home" 
+        [ branding ]
+
+
+branding : Html msg
+branding =
+    div [ class "branding" ]
+        [ a
+            [ href "#"
+            , class "page-title"
+            ]
+            [ text "Elm Gallery" ]
         ]
+
 
 icon : String -> Html msg
 icon symbol =
     svg
         [ Svg.Attributes.class "icon" ]
-        [ use 
-            [ xlinkHref ("#" ++ symbol)]
+        [ use
+            [ xlinkHref ("#" ++ symbol) ]
             []
         ]
 

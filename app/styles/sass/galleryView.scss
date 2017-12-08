@@ -1,7 +1,4 @@
 .gallery-view {
-    width: 90%;
-    margin: 50px auto;
-    padding: .4em;
     -moz-column-gap: 0;
     -webkit-column-gap: 0;
     column-gap: 0;
@@ -25,7 +22,7 @@
 
 }
 
-@media only screen and (min-width: 400px) {
+@media only screen and (min-width: 300px) {
     .gallery-view {
         -moz-column-count: 2;
         -webkit-column-count: 2;

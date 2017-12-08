@@ -133,12 +133,12 @@ renderImageNavLink maybeImage maybePerson direction =
             renderImageLink image maybePerson direction
 
         Nothing ->
-            text "Nothing"
+            text "No more images."
 
 
 renderImageNav : Image -> List Image -> Maybe Person -> Html msg
 renderImageNav image gallery maybePerson =
-    div []
+    div [ class "image-nav" ]
         [ renderImageNavLink (prevImage image gallery) maybePerson Previous
         , renderImageNavLink (nextImage image gallery) maybePerson Next
         ]
@@ -146,16 +146,26 @@ renderImageNav image gallery maybePerson =
 
 renderImageLink : Image -> Maybe Person -> NavDirection -> Html msg
 renderImageLink image maybePerson direction =
-    case maybePerson of
-        Just person ->
-            a
-                [ href (pathFor (PersonImageRoute image.id person.id)) ]
-                [ text (toString direction) ]
+    let
+        directionStr =
+            direction
+                |> toString
+                |> String.toLower
+    in
+        case maybePerson of
+            Just person ->
+                a
+                    [ href (pathFor (PersonImageRoute image.id person.id))
+                    , class directionStr
+                    ]
+                    [ text directionStr ]
 
-        Nothing ->
-            a
-                [ href (pathFor (ImageRoute image.id)) ]
-                [ text (toString direction) ]
+            Nothing ->
+                a
+                    [ href (pathFor (ImageRoute image.id))
+                    , class directionStr
+                    ]
+                    [ text directionStr ]
 
 
 notFoundView : Html msg

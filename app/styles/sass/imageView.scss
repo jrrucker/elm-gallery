@@ -1,11 +1,43 @@
 .image-view {
-    width: 90%;
-    max-width: 900px;
-    margin: 50px auto;
+    padding: 0 .4em;
+    margin: .4em auto;
 
     img {
         display: block;
         width: 100%;
     }
-
 }
+
+.image-nav {
+    a {
+        position: fixed;
+        top: 50%;
+        display: block;
+        width: 50px;
+        height: 50px;
+        margin-top: -25px;
+        background-size: 100px 100px;
+        overflow: hidden;
+        text-indent: 200%;
+        opacity: .3;
+
+        &:hover {
+            opacity: .6;
+        }
+    }
+
+    .previous {
+        left: 0px;
+        background-image: url('images/chevron-left.svg');
+        background-repeat: no-repeat;
+        background-position-x: -2px;
+    }
+    
+    .next {
+        right: 0px;
+        background-image: url('images/chevron-right.svg');
+        background-repeat: no-repeat;
+        background-position-x: -2px;
+    }
+}
+
