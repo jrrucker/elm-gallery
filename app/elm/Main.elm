@@ -5,10 +5,11 @@ import View exposing (..)
 import Images.GalleryView exposing (galleryView)
 import Commands exposing (loadImages, loadPeople)
 import Routing exposing (Route, parseLocation)
-import RemoteData exposing (WebData)
+import RemoteData exposing (WebData, RemoteData(..))
 import Html exposing (Html, div, text)
-import Images.Models exposing (Image, Person)
+import Images.Models exposing (Image, Person, Album)
 import Images.ImageView exposing (imageView)
+import Task
 
 
 main : Program Never Model Msg
@@ -27,31 +28,30 @@ main =
 
 type alias Model =
     { route : Route
-    , allImages : WebData (List Image)
-    , allPeople : WebData (List Person)
-    }
-
-
-initialModel : Route -> Model
-initialModel route =
-    { route = route
-    , allImages = RemoteData.NotAsked
-    , allPeople = RemoteData.NotAsked
+    , album : WebData Album
     }
 
 
 init : Location -> ( Model, Cmd Msg )
 init location =
     let
-        currentRoute =
+        initialRoute =
             Routing.parseLocation location
     in
-        ( initialModel currentRoute
-        , Cmd.batch
-            [ loadImages OnLoadImages
-            , loadPeople OnLoadPeople
-            ]
+        ( { route = initialRoute
+          , album = Loading
+          }
+        , loadAlbum
         )
+
+
+loadAlbum : Cmd Msg
+loadAlbum =
+    Task.map2 Album
+        loadImages
+        loadPeople
+        |> RemoteData.asCmd
+        |> Cmd.map AlbumLoaded
 
 
 
@@ -60,25 +60,19 @@ init location =
 
 type Msg
     = OnLocationChange Location
-    | OnLoadImages (WebData (List Image))
-    | OnLoadPeople (WebData (List Person))
+    | AlbumLoaded (WebData Album)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         OnLocationChange location ->
-            let
-                newRoute =
-                    parseLocation location
-            in
-                ( { model | route = newRoute }, Cmd.none )
+            ( { model | route = parseLocation location }
+            , Cmd.none
+            )
 
-        OnLoadImages response ->
-            ( { model | allImages = response }, Cmd.none )
-
-        OnLoadPeople response ->
-            ( { model | allPeople = response }, Cmd.none )
+        AlbumLoaded response ->
+            ( { model | album = response }, Cmd.none )
 
 
 
@@ -94,34 +88,38 @@ notFoundView =
 view : Model -> Html Msg
 view model =
     div []
-        [ pageView model ]
+        [ case model.album of
+            NotAsked ->
+                loadingView
+
+            Loading ->
+                loadingView
+
+            Success album ->
+                pageView model.route album
+
+            Failure error ->
+                errorView error
+        ]
 
 
-pageView : Model -> Html msg
-pageView model =
-    let
-        combinedRequests =
-            RemoteData.append model.allImages model.allPeople
-    in
-        case model.route of
-            Routing.ImageRoute imageId ->
-                combinedRequests
-                    |> remoteDataView (imageView Maybe.Nothing imageId)
+pageView : Route -> Album -> Html msg
+pageView route album =
+    case route of
+        Routing.ImageRoute imageId ->
+            imageView Maybe.Nothing imageId album
 
-            Routing.PersonRoute personId ->
-                combinedRequests
-                    |> remoteDataView (galleryView (Maybe.Just personId))
+        Routing.PersonRoute personId ->
+            galleryView (Maybe.Just personId) album
 
-            Routing.HomeRoute ->
-                combinedRequests
-                    |> remoteDataView (galleryView Maybe.Nothing)
+        Routing.HomeRoute ->
+            galleryView Maybe.Nothing album
 
-            Routing.PersonImageRoute personId imageId ->
-                combinedRequests
-                    |> remoteDataView (imageView (Maybe.Just personId) imageId)
+        Routing.PersonImageRoute personId imageId ->
+            imageView (Maybe.Just personId) imageId album
 
-            Routing.NotFoundRoute ->
-                notFoundView
+        Routing.NotFoundRoute ->
+            notFoundView
 
 
 

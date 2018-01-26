@@ -7,13 +7,13 @@ import Images.Models exposing (..)
 import Images.Utils exposing (..)
 
 
-galleryView : Maybe PersonId -> ( List Image, List Person ) -> Html msg
-galleryView maybePersonId ( allImages, allPeople ) =
+galleryView : Maybe PersonId -> Album -> Html msg
+galleryView maybePersonId album =
     case maybePersonId of
         Just personId ->
-            case (getPerson personId allPeople) of
+            case (getPerson personId album.people) of
                 Just person ->
-                    (getImagesOfPerson personId allImages)
+                    (getImagesOfPerson personId album.images)
                         |> List.map (cardView maybePersonId)
                         |> buildGalleryView
 
@@ -21,7 +21,7 @@ galleryView maybePersonId ( allImages, allPeople ) =
                     notFoundView
 
         Nothing ->
-            allImages
+            album.images
                 |> List.map (cardView Maybe.Nothing)
                 |> buildGalleryView
 
