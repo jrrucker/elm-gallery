@@ -8,15 +8,15 @@ import Json.Decode.Pipeline exposing (decode, required)
 import Images.Models exposing (Image, Person, ImagesContainerModel)
 
 
-loadImages : Task Http.Error (List Image)
-loadImages =
-    Http.get "images.json" imagesDecoder
+loadImages : String -> Task Http.Error (List Image)
+loadImages albumPath =
+    Http.get (albumPath ++ "/images.json") imagesDecoder
         |> Http.toTask
 
 
-loadPeople : Task Http.Error (List Person)
-loadPeople =
-    Http.get "people.json" peopleDecoder
+loadPeople : String -> Task Http.Error (List Person)
+loadPeople albumPath =
+    Http.get (albumPath ++ "/people.json") peopleDecoder
         |> Http.toTask
 
 

@@ -13,8 +13,11 @@
   "devDependencies": {
     "auto-reload-brunch": "^2.7.1",
     "brunch": "^2.10.12",
+    "download": "^6.2.5",
     "elm": "^0.18.0",
-    "elm-fancy-brunch": "^1.0.0"
+    "elm-fancy-brunch": "^1.0.0",
+    "fs-extra": "^5.0.0",
+    "image-size": "^0.6.2"
   },
   "license": {
     "type": "MIT",

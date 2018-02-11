@@ -1,3 +1,5 @@
 node_modules
 elm-stuff
 public
+app/assets/gen_album
+app/assets/images.json

@@ -37,19 +37,27 @@ init location =
     let
         initialRoute =
             Routing.parseLocation location
+
+        albumPath =
+            case (String.split "=" location.search) of
+                [ "?album", name ] ->
+                    name
+
+                _ ->
+                    ""
     in
         ( { route = initialRoute
           , album = Loading
           }
-        , loadAlbum
+        , loadAlbum albumPath
         )
 
 
-loadAlbum : Cmd Msg
-loadAlbum =
+loadAlbum : String -> Cmd Msg
+loadAlbum albumPath =
     Task.map2 Album
-        loadImages
-        loadPeople
+        (loadImages albumPath)
+        (loadPeople albumPath)
         |> RemoteData.asCmd
         |> Cmd.map AlbumLoaded
 
