@@ -12,13 +12,13 @@ type NavDirection
     | Next
 
 
-imageView : Maybe PersonId -> ImageId -> ( List Image, List Person ) -> Html msg
-imageView maybePersonId imageId ( allImages, allPeople ) =
-    case (getImage imageId allImages) of
+imageView : Maybe PersonId -> ImageId -> Album -> Html msg
+imageView maybePersonId imageId album =
+    case (getImage imageId album.images) of
         Just image ->
             let
                 people =
-                    getPeople image allPeople
+                    getPeople image album.people
             in
                 case maybePersonId of
                     Just personId ->
@@ -27,10 +27,10 @@ imageView maybePersonId imageId ( allImages, allPeople ) =
                                 List.member personId image.people
 
                             imagesInGallery =
-                                getImagesOfPerson personId allImages
+                                getImagesOfPerson personId album.images
 
                             maybePerson =
-                                getPerson personId allPeople
+                                getPerson personId album.people
                         in
                             if (personHasImage) then
                                 buildImageView
@@ -44,7 +44,7 @@ imageView maybePersonId imageId ( allImages, allPeople ) =
                     Nothing ->
                         buildImageView
                             image
-                            allImages
+                            album.images
                             Maybe.Nothing
                             people
 

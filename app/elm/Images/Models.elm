@@ -33,3 +33,9 @@ type alias Person =
 
 type alias ImagesContainerModel =
     { images : List Image }
+
+
+type alias Album =
+    { images : List Image
+    , people : List Person
+    }
