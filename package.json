@@ -23,5 +23,8 @@
     "type": "MIT",
     "url": "http://www.opensource.org/licenses/mit-license.php"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "justified-layout": "^2.1.1"
+  }
 }

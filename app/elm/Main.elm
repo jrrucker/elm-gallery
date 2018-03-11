@@ -2,14 +2,14 @@ module Main exposing (..)
 
 import Navigation exposing (Location)
 import View exposing (..)
-import Images.GalleryView exposing (galleryView)
 import Commands exposing (loadImages, loadPeople)
 import Routing exposing (Route, parseLocation)
 import RemoteData exposing (WebData, RemoteData(..))
 import Html exposing (Html, div, text)
 import Images.Models exposing (Image, Person, Album)
-import Images.ImageView exposing (imageView)
+import Interop exposing (InMessage)
 import Task
+import Page exposing (Page, PageState)
 
 
 main : Program Never Model Msg
@@ -29,6 +29,7 @@ main =
 type alias Model =
     { route : Route
     , album : WebData Album
+    , pageState : PageState
     }
 
 
@@ -48,6 +49,7 @@ init location =
     in
         ( { route = initialRoute
           , album = Loading
+          , pageState = Page.initialState
           }
         , loadAlbum albumPath
         )
@@ -69,18 +71,71 @@ loadAlbum albumPath =
 type Msg
     = OnLocationChange Location
     | AlbumLoaded (WebData Album)
+    | JsMessage InMessage
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        OnLocationChange location ->
-            ( { model | route = parseLocation location }
-            , Cmd.none
-            )
+    case model.album of
+        RemoteData.Success album ->
+            case msg of
+                OnLocationChange location ->
+                    let
+                        route =
+                            parseLocation location
 
-        AlbumLoaded response ->
-            ( { model | album = response }, Cmd.none )
+                        ( newState, cmd ) =
+                            Page.fromRoute model.pageState album route
+                    in
+                        ( { model
+                            | pageState = newState
+                          }
+                        , cmd
+                        )
+
+                JsMessage jsMessage ->
+                    case jsMessage of
+                        Interop.Unknown ->
+                            ( model, Cmd.none )
+
+                        _ ->
+                            let
+                                newPageState =
+                                    Page.setLayout jsMessage model.pageState
+                            in
+                                ( { model
+                                    | pageState = newPageState
+                                  }
+                                , Cmd.none
+                                )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        _ ->
+            case msg of
+                AlbumLoaded loadState ->
+                    let
+                        loadingUpdated =
+                            { model | album = loadState }
+                    in
+                        case loadState of
+                            RemoteData.Success album ->
+                                let
+                                    ( newPageState, cmd ) =
+                                        Page.fromRoute model.pageState album model.route
+                                in
+                                    ( { loadingUpdated
+                                        | pageState = newPageState
+                                      }
+                                    , cmd
+                                    )
+
+                            _ ->
+                                ( loadingUpdated, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 
@@ -104,30 +159,11 @@ view model =
                 loadingView
 
             Success album ->
-                pageView model.route album
+                Page.view model.pageState album
 
             Failure error ->
                 errorView error
         ]
-
-
-pageView : Route -> Album -> Html msg
-pageView route album =
-    case route of
-        Routing.ImageRoute imageId ->
-            imageView Maybe.Nothing imageId album
-
-        Routing.PersonRoute personId ->
-            galleryView (Maybe.Just personId) album
-
-        Routing.HomeRoute ->
-            galleryView Maybe.Nothing album
-
-        Routing.PersonImageRoute personId imageId ->
-            imageView (Maybe.Just personId) imageId album
-
-        Routing.NotFoundRoute ->
-            notFoundView
 
 
 
@@ -136,4 +172,4 @@ pageView route album =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Interop.recieve JsMessage

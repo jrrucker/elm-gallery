@@ -13,7 +13,20 @@
 
 <body>
     <script>
-        require('elm/Main.elm').Main.fullscreen();
+        let app = require('elm/Main.elm').Main.fullscreen();
+        let helpers = require('js/elmHelpers.js');
+
+     console.log(app.ports);
+
+     app.ports.toJs.subscribe((msg) => {
+         console.log('From Elm:', msg);
+         let result = helpers(msg);
+         console.log('To Elm:', helpers(msg));
+         if (result) {
+             app.ports.fromJs.send(result);
+         }
+
+     });
     </script>
 </body>
 
