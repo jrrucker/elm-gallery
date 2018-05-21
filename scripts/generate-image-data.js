@@ -20,7 +20,7 @@ if (!fs.existsSync(imgDownloadPath)) {
 fetchImageList((urls) => {
     console.log('Downloading images...');
     Promise.all(urls.map((url) => {
-        download(url, imgDownloadPath);
+        return download(url, imgDownloadPath);
     })).then(() => {
         fs.copySync(imgDownloadPath, albumPath);
         console.log('Downloads Complete!');
@@ -54,7 +54,9 @@ function generateAlbum() {
                 thumbnail: url,
                 fullsize: url,
                 download: url,
-                people: [1]
+                people: [1],
+                width: width,
+                height: height
             };
     });
 
