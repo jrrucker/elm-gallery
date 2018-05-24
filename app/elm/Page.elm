@@ -1,4 +1,4 @@
-module Page exposing (Page(..), PageState, fromRoute, setLayout, initialState, view)
+module Page exposing (Page(..), PageState, fromRoute, jsUpdate, initialState, view)
 
 import Page.Home as Home
 import Page.Person as Person
@@ -75,8 +75,8 @@ fromRoute currentState album route =
             ( Loaded Blank, Cmd.none )
 
 
-setLayout : InMessage -> PageState -> PageState
-setLayout msg pageState =
+jsUpdate : InMessage -> PageState -> PageState
+jsUpdate msg pageState =
     case ( msg, pageState ) of
         ( HomeLayout layout, Transitioning _ (Home model) ) ->
             Loaded (Home (Home.setLayout model layout))

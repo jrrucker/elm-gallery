@@ -14,7 +14,7 @@ import Page exposing (Page, PageState)
 
 main : Program Never Model Msg
 main =
-    Navigation.program OnLocationChange
+    Navigation.program (Routing.parseLocation >> OnRouteChange)
         { init = init
         , view = view
         , update = update
@@ -69,7 +69,7 @@ loadAlbum albumPath =
 
 
 type Msg
-    = OnLocationChange Location
+    = OnRouteChange Route
     | AlbumLoaded (WebData Album)
     | JsMessage InMessage
 
@@ -78,64 +78,61 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model.album of
         RemoteData.Success album ->
-            case msg of
-                OnLocationChange location ->
-                    let
-                        route =
-                            parseLocation location
+            loadedUpdate msg model album
 
-                        ( newState, cmd ) =
-                            Page.fromRoute model.pageState album route
+        _ ->
+            loadingUpdate msg model
+
+
+loadedUpdate : Msg -> Model -> Album -> ( Model, Cmd Msg )
+loadedUpdate msg model album =
+    case msg of
+        OnRouteChange route ->
+            let
+                ( newState, cmd ) =
+                    Page.fromRoute model.pageState album route
+            in
+                ( { model
+                    | pageState = newState
+                  }
+                , cmd
+                )
+
+        JsMessage jsMessage ->
+            ( { model
+                | pageState = Page.jsUpdate jsMessage model.pageState
+              }
+            , Cmd.none
+            )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+loadingUpdate : Msg -> Model -> ( Model, Cmd Msg )
+loadingUpdate msg model =
+    case msg of
+        AlbumLoaded loadState ->
+            case loadState of
+                RemoteData.Success album ->
+                    let
+                        ( newPageState, cmd ) =
+                            Page.fromRoute model.pageState album model.route
                     in
                         ( { model
-                            | pageState = newState
+                            | pageState = newPageState
+                            , album = loadState
                           }
                         , cmd
                         )
 
-                JsMessage jsMessage ->
-                    case jsMessage of
-                        Interop.Unknown ->
-                            ( model, Cmd.none )
-
-                        _ ->
-                            let
-                                newPageState =
-                                    Page.setLayout jsMessage model.pageState
-                            in
-                                ( { model
-                                    | pageState = newPageState
-                                  }
-                                , Cmd.none
-                                )
-
                 _ ->
-                    ( model, Cmd.none )
+                    ( { model | album = loadState }
+                    , Cmd.none
+                    )
 
         _ ->
-            case msg of
-                AlbumLoaded loadState ->
-                    let
-                        loadingUpdated =
-                            { model | album = loadState }
-                    in
-                        case loadState of
-                            RemoteData.Success album ->
-                                let
-                                    ( newPageState, cmd ) =
-                                        Page.fromRoute model.pageState album model.route
-                                in
-                                    ( { loadingUpdated
-                                        | pageState = newPageState
-                                      }
-                                    , cmd
-                                    )
-
-                            _ ->
-                                ( loadingUpdated, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+            ( model, Cmd.none )
 
 
 
