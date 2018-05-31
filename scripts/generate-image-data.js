@@ -44,7 +44,7 @@ function generateAlbum() {
             let {width, height} = sizeOf(imgPath);
             let url = "gen_album/" + name;
             let people = [1, 2, 3].filter(() => {
-                return Math.random > 0.3;
+                return Math.random() > 0.3;
             });
 
             return {
@@ -54,7 +54,7 @@ function generateAlbum() {
                 thumbnail: url,
                 fullsize: url,
                 download: url,
-                people: [1],
+                people: people,
                 width: width,
                 height: height
             };

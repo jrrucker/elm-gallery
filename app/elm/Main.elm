@@ -2,19 +2,19 @@ module Main exposing (..)
 
 import Navigation exposing (Location)
 import View exposing (..)
-import Images.GalleryView exposing (galleryView)
 import Commands exposing (loadImages, loadPeople)
 import Routing exposing (Route, parseLocation)
 import RemoteData exposing (WebData, RemoteData(..))
 import Html exposing (Html, div, text)
 import Images.Models exposing (Image, Person, Album)
-import Images.ImageView exposing (imageView)
+import Interop exposing (InMessage)
 import Task
+import Page exposing (Page, PageState)
 
 
 main : Program Never Model Msg
 main =
-    Navigation.program OnLocationChange
+    Navigation.program (Routing.parseLocation >> OnRouteChange)
         { init = init
         , view = view
         , update = update
@@ -29,6 +29,7 @@ main =
 type alias Model =
     { route : Route
     , album : WebData Album
+    , pageState : PageState
     }
 
 
@@ -48,6 +49,7 @@ init location =
     in
         ( { route = initialRoute
           , album = Loading
+          , pageState = Page.initialState
           }
         , loadAlbum albumPath
         )
@@ -67,20 +69,70 @@ loadAlbum albumPath =
 
 
 type Msg
-    = OnLocationChange Location
+    = OnRouteChange Route
     | AlbumLoaded (WebData Album)
+    | JsMessage InMessage
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    case model.album of
+        RemoteData.Success album ->
+            loadedUpdate msg model album
+
+        _ ->
+            loadingUpdate msg model
+
+
+loadedUpdate : Msg -> Model -> Album -> ( Model, Cmd Msg )
+loadedUpdate msg model album =
     case msg of
-        OnLocationChange location ->
-            ( { model | route = parseLocation location }
+        OnRouteChange route ->
+            let
+                ( newState, cmd ) =
+                    Page.fromRoute model.pageState album route
+            in
+                ( { model
+                    | pageState = newState
+                  }
+                , cmd
+                )
+
+        JsMessage jsMessage ->
+            ( { model
+                | pageState = Page.jsUpdate jsMessage model.pageState
+              }
             , Cmd.none
             )
 
-        AlbumLoaded response ->
-            ( { model | album = response }, Cmd.none )
+        _ ->
+            ( model, Cmd.none )
+
+
+loadingUpdate : Msg -> Model -> ( Model, Cmd Msg )
+loadingUpdate msg model =
+    case msg of
+        AlbumLoaded loadState ->
+            case loadState of
+                RemoteData.Success album ->
+                    let
+                        ( newPageState, cmd ) =
+                            Page.fromRoute model.pageState album model.route
+                    in
+                        ( { model
+                            | pageState = newPageState
+                            , album = loadState
+                          }
+                        , cmd
+                        )
+
+                _ ->
+                    ( { model | album = loadState }
+                    , Cmd.none
+                    )
+
+        _ ->
+            ( model, Cmd.none )
 
 
 
@@ -104,30 +156,11 @@ view model =
                 loadingView
 
             Success album ->
-                pageView model.route album
+                Page.view model.pageState album
 
             Failure error ->
                 errorView error
         ]
-
-
-pageView : Route -> Album -> Html msg
-pageView route album =
-    case route of
-        Routing.ImageRoute imageId ->
-            imageView Maybe.Nothing imageId album
-
-        Routing.PersonRoute personId ->
-            galleryView (Maybe.Just personId) album
-
-        Routing.HomeRoute ->
-            galleryView Maybe.Nothing album
-
-        Routing.PersonImageRoute personId imageId ->
-            imageView (Maybe.Just personId) imageId album
-
-        Routing.NotFoundRoute ->
-            notFoundView
 
 
 
@@ -136,4 +169,4 @@ pageView route album =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Interop.recieve JsMessage

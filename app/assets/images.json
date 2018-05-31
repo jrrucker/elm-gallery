@@ -7,7 +7,9 @@
             "thumbnail": "http://placehold.it/300x500",
             "fullsize": "http://placehold.it/900x1500",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 1500
         },
         {
             "id": 2,
@@ -16,7 +18,9 @@
             "thumbnail": "http://placehold.it/300x100",
             "fullsize": "http://placehold.it/900x300",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 300
         },
         {
             "id": 3,
@@ -25,7 +29,9 @@
             "thumbnail": "http://placehold.it/300x600",
             "fullsize": "http://placehold.it/900x1800",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 1800
         },
         {
             "id": 4,
@@ -34,7 +40,9 @@
             "thumbnail": "http://placehold.it/300x140",
             "fullsize": "http://placehold.it/900x420",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 420
         },
         {
             "id": 5,
@@ -43,7 +51,9 @@
             "thumbnail": "http://placehold.it/300x900",
             "fullsize": "http://placehold.it/900x2700",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 2700
         },
         {
             "id": 6,
@@ -52,7 +62,9 @@
             "thumbnail": "http://placehold.it/300x125",
             "fullsize": "http://placehold.it/900x375",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 375
         },
         {
             "id": 7,
@@ -61,7 +73,9 @@
             "thumbnail": "http://placehold.it/300x300",
             "fullsize": "http://placehold.it/900x900",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 900
         },
         {
             "id": 8,
@@ -70,7 +84,9 @@
             "thumbnail": "http://placehold.it/300x200",
             "fullsize": "http://placehold.it/900x600",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 600
         },
         {
             "id": 9,
@@ -79,7 +95,9 @@
             "thumbnail": "http://placehold.it/300x900",
             "fullsize": "http://placehold.it/900x2700",
             "download": "http://placehold.it/3600x2400",
-            "people": [1,2,3]
+            "people": [1,2,3],
+            "width": 900,
+            "height": 2700
         },
         {
             "id": 10,
@@ -88,7 +106,9 @@
             "thumbnail": "http://placehold.it/300x280",
             "fullsize": "http://placehold.it/900x840",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 840
         },
         {
             "id": 11,
@@ -97,7 +117,9 @@
             "thumbnail": "http://placehold.it/300x333",
             "fullsize": "http://placehold.it/900x999",
             "download": "http://placehold.it/3600x2400",
-            "people": [2,3]
+            "people": [2,3],
+            "width": 900,
+            "height": 999
         },
         {
             "id": 12,
@@ -106,7 +128,9 @@
             "thumbnail": "http://placehold.it/300x100",
             "fullsize": "http://placehold.it/900x300",
             "download": "http://placehold.it/3600x2400",
-            "people": [3]
+            "people": [3],
+            "width": 900,
+            "height": 300
         },
         {
             "id": 13,
@@ -115,7 +139,9 @@
             "thumbnail": "http://placehold.it/300x300",
             "fullsize": "http://placehold.it/900x900",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 900
         },
         {
             "id": 14,
@@ -124,7 +150,9 @@
             "thumbnail": "http://placehold.it/300x400",
             "fullsize": "http://placehold.it/900x1200",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 1200
         },
         {
             "id": 15,
@@ -133,7 +161,9 @@
             "thumbnail": "http://placehold.it/300x700",
             "fullsize": "http://placehold.it/900x2100",
             "download": "http://placehold.it/3600x2400",
-            "people": [2]
+            "people": [2],
+            "width": 900,
+            "height": 2100
         },
         {
             "id": 16,
@@ -142,7 +172,9 @@
             "thumbnail": "http://placehold.it/300x300",
             "fullsize": "http://placehold.it/900x900",
             "download": "http://placehold.it/3600x2400",
-            "people": []
+            "people": [],
+            "width": 900,
+            "height": 900
         },
         {
             "id": 17,
@@ -151,7 +183,9 @@
             "thumbnail": "http://placehold.it/300x200",
             "fullsize": "http://placehold.it/900x600",
             "download": "http://placehold.it/3600x2400",
-            "people": []
+            "people": [],
+            "width": 900,
+            "height": 600
         },
         {
             "id": 18,
@@ -160,7 +194,9 @@
             "thumbnail": "http://placehold.it/300x100",
             "fullsize": "http://placehold.it/900x300",
             "download": "http://placehold.it/3600x2400",
-            "people": [1,2]
+            "people": [1,2],
+            "width": 900,
+            "height": 300
         },
         {
             "id": 19,
@@ -169,7 +205,9 @@
             "thumbnail": "http://placehold.it/300x330",
             "fullsize": "http://placehold.it/900x990",
             "download": "http://placehold.it/3600x2400",
-            "people": [1]
+            "people": [1],
+            "width": 900,
+            "height": 990
         },
         {
             "id": 20,
@@ -178,7 +216,9 @@
             "thumbnail": "http://placehold.it/300x250",
             "fullsize": "http://placehold.it/900x750",
             "download": "http://placehold.it/3600x2400",
-            "people": [3]
+            "people": [3],
+            "width": 900,
+            "height": 750
         }
     ]
 }

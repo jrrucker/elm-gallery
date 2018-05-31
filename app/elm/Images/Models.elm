@@ -22,6 +22,8 @@ type alias Image =
     , fullsize : String
     , download : String
     , people : List PersonId
+    , width : Int
+    , height : Int
     }
 
 
@@ -38,4 +40,20 @@ type alias ImagesContainerModel =
 type alias Album =
     { images : List Image
     , people : List Person
+    }
+
+
+type alias Layout =
+    { containerHeight : Float
+    , widowCount : Int
+    , boxes : List ImgLayout
+    }
+
+
+type alias ImgLayout =
+    { aspectRatio : Float
+    , top : Float
+    , left : Float
+    , width : Float
+    , height : Float
     }
