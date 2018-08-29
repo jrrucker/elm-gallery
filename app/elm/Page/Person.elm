@@ -7,7 +7,6 @@ import Images.Utils exposing (getImagesOfPerson)
 import Images.JustifiedView exposing (justifiedView)
 import Routing
 
-
 type Model
     = AwaitingLayout PersonId
     | Loaded PersonId Layout
@@ -25,9 +24,10 @@ setLayout model layout =
     case model of
         AwaitingLayout personId ->
             Loaded personId layout
+            
 
-        Loaded _ _ ->
-            model
+        Loaded personId _ ->
+            Loaded personId layout
 
 
 view : Album -> Model -> Html msg

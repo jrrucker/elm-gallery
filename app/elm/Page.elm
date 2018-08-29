@@ -84,6 +84,12 @@ jsUpdate msg pageState =
         ( PersonLayout layout, Transitioning _ (Person model) ) ->
             Loaded (Person (Person.setLayout model layout))
 
+        ( HomeLayout layout, Loaded (Home model) ) ->
+            Loaded (Home (Home.setLayout model layout))
+
+        ( PersonLayout layout, Loaded (Person model) ) ->
+            Loaded (Person (Person.setLayout model layout))
+
         ( _, _ ) ->
             pageState
 

@@ -10,6 +10,7 @@ import Images.Models exposing (Image, Person, Album)
 import Interop exposing (InMessage)
 import Task
 import Page exposing (Page, PageState)
+import Window exposing (..)
 
 
 main : Program Never Model Msg
@@ -72,7 +73,7 @@ type Msg
     = OnRouteChange Route
     | AlbumLoaded (WebData Album)
     | JsMessage InMessage
-
+    | Resize
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -94,6 +95,7 @@ loadedUpdate msg model album =
             in
                 ( { model
                     | pageState = newState
+                    , route = route
                   }
                 , cmd
                 )
@@ -104,6 +106,15 @@ loadedUpdate msg model album =
               }
             , Cmd.none
             )
+
+        Resize -> 
+            let
+                ( newState, cmd ) =
+                    Page.fromRoute model.pageState album model.route
+            in
+                ( model
+                , cmd
+                )
 
         _ ->
             ( model, Cmd.none )
@@ -169,4 +180,7 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Interop.recieve JsMessage
+    Sub.batch
+        [ Interop.recieve JsMessage
+        , Window.resizes (\{height, width} -> Resize)
+        ]
