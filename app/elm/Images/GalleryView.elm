@@ -1,10 +1,10 @@
 module Images.GalleryView exposing (galleryView, personGallery)
 
-import Html exposing (Html, div, a, img, text)
-import Html.Attributes exposing (class, href, src, alt, title)
-import Routing exposing (Route(..), pathFor)
+import Html exposing (Html, a, div, img, text)
+import Html.Attributes exposing (alt, class, href, src, title)
 import Images.Models exposing (..)
 import Images.Utils exposing (..)
+import Routing exposing (Route(..), pathFor)
 
 
 personGallery : PersonId -> List Image -> Html msg
@@ -18,9 +18,9 @@ galleryView : Maybe PersonId -> Album -> Html msg
 galleryView maybePersonId album =
     case maybePersonId of
         Just personId ->
-            case (getPerson personId album.people) of
+            case getPerson personId album.people of
                 Just person ->
-                    (getImagesOfPerson personId album.images)
+                    getImagesOfPerson personId album.images
                         |> List.map (cardView maybePersonId)
                         |> buildGalleryView
 
@@ -48,11 +48,11 @@ cardView maybePersonId image =
                 |> Maybe.map (PersonImageRoute image.id)
                 |> Maybe.withDefault (ImageRoute image.id)
     in
-        a
-            [ class "view-image"
-            , href (pathFor path)
-            ]
-            [ renderThumbnail image ]
+    a
+        [ class "view-image"
+        , href (pathFor path)
+        ]
+        [ renderThumbnail image ]
 
 
 renderThumbnail : Image -> Html msg

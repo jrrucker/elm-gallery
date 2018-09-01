@@ -13,7 +13,8 @@
 
 <body>
     <script>
-        let app = require('elm/Main.elm').Main.fullscreen();
+        require('elm/Main.elm');
+        let app = Elm.Main.init();
         let helpers = require('js/elmHelpers.js');
 
      console.log(app.ports);

@@ -1,4 +1,4 @@
-module Images.Utils exposing (..)
+module Images.Utils exposing (getImage, getImagesOfPerson, getPeople, getPerson)
 
 import Images.Models exposing (..)
 
@@ -19,9 +19,9 @@ getPerson id allPeople =
 
 getPeople : Image -> List Person -> List Person
 getPeople image allPeople =
-    List.filter (\person -> (List.member person.id image.people)) allPeople
+    List.filter (\person -> List.member person.id image.people) allPeople
 
 
 getImagesOfPerson : PersonId -> List Image -> List Image
 getImagesOfPerson personId allImages =
-    List.filter (\image -> (List.member personId image.people)) allImages
+    List.filter (\image -> List.member personId image.people) allImages

@@ -1,10 +1,9 @@
-module Page.Home exposing (Model, init, view, setLayout)
+module Page.Home exposing (Model, init, setLayout, view)
 
-import Html exposing (Html, text, div)
-import Images.Models exposing (Layout, Album)
-import Interop exposing (OutMessage(..))
+import Html exposing (Html, div, text)
 import Images.JustifiedView exposing (justifiedView)
-import Images.Models exposing (Album)
+import Images.Models exposing (Album, Layout)
+import Interop exposing (OutMessage(..))
 import Routing
 
 

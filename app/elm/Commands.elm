@@ -1,12 +1,12 @@
-module Commands exposing (..)
+module Commands exposing (encodeImage, imageDecoder, imagesDecoder, imgLayoutDecoder, layoutDecoder, loadImages, loadPeople, peopleDecoder, personDecoder)
 
 import Http
-import Task exposing (Task)
+import Images.Models exposing (Image, ImagesContainerModel, ImgLayout, Layout, Person)
 import Json.Decode as Decode
 import Json.Decode.Extra as DecodeExtra
-import Json.Decode.Pipeline exposing (decode, required)
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as Encode
-import Images.Models exposing (Image, Person, ImagesContainerModel, Layout, ImgLayout)
+import Task exposing (Task)
 
 
 loadImages : String -> Task Http.Error (List Image)
@@ -28,7 +28,7 @@ peopleDecoder =
 
 personDecoder : Decode.Decoder Person
 personDecoder =
-    decode Person
+    Decode.succeed Person
         |> required "id" Decode.int
         |> required "name" Decode.string
 
@@ -40,16 +40,16 @@ imagesDecoder =
 
 imageDecoder : Decode.Decoder Image
 imageDecoder =
-    decode Image
+    Decode.succeed Image
         |> required "id" Decode.int
         |> required "description" Decode.string
-        |> required "dateAdded" DecodeExtra.date
+        |> required "dateAdded" DecodeExtra.datetime
         |> required "thumbnail" Decode.string
         |> required "fullsize" Decode.string
         |> required "download" Decode.string
         |> required "people" (Decode.list Decode.int)
-        |> required "width" (Decode.int)
-        |> required "height" (Decode.int)
+        |> required "width" Decode.int
+        |> required "height" Decode.int
 
 
 encodeImage : Image -> Encode.Value
@@ -60,7 +60,7 @@ encodeImage image =
         , ( "thumbnail", Encode.string image.thumbnail )
         , ( "fullsize", Encode.string image.fullsize )
         , ( "download", Encode.string image.download )
-        , ( "people", Encode.list <| List.map Encode.int image.people )
+        , ( "people", Encode.list Encode.int image.people )
         , ( "width", Encode.int image.width )
         , ( "height", Encode.int image.height )
         ]
@@ -68,7 +68,7 @@ encodeImage image =
 
 layoutDecoder : Decode.Decoder Layout
 layoutDecoder =
-    decode Layout
+    Decode.succeed Layout
         |> required "containerHeight" Decode.float
         |> required "widowCount" Decode.int
         |> required "boxes" (Decode.list imgLayoutDecoder)
@@ -76,7 +76,7 @@ layoutDecoder =
 
 imgLayoutDecoder : Decode.Decoder ImgLayout
 imgLayoutDecoder =
-    decode ImgLayout
+    Decode.succeed ImgLayout
         |> required "aspectRatio" Decode.float
         |> required "top" Decode.float
         |> required "left" Decode.float

@@ -1,7 +1,7 @@
 module Images.ImageView exposing (imageView)
 
-import Html exposing (Html, div, img, text, p, strong, span, a)
-import Html.Attributes exposing (src, alt, title, class, href)
+import Html exposing (Html, a, div, img, p, span, strong, text)
+import Html.Attributes exposing (alt, class, href, src, title)
 import Images.Models exposing (..)
 import Images.Utils exposing (..)
 import Routing exposing (Route(..), pathFor)
@@ -12,41 +12,52 @@ type NavDirection
     | Next
 
 
+dirString : NavDirection -> String
+dirString dir =
+    case dir of
+        Previous ->
+            "Previous"
+
+        Next ->
+            "Next"
+
+
 imageView : Maybe PersonId -> ImageId -> Album -> Html msg
 imageView maybePersonId imageId album =
-    case (getImage imageId album.images) of
+    case getImage imageId album.images of
         Just image ->
             let
                 people =
                     getPeople image album.people
             in
-                case maybePersonId of
-                    Just personId ->
-                        let
-                            personHasImage =
-                                List.member personId image.people
+            case maybePersonId of
+                Just personId ->
+                    let
+                        personHasImage =
+                            List.member personId image.people
 
-                            imagesInGallery =
-                                getImagesOfPerson personId album.images
+                        imagesInGallery =
+                            getImagesOfPerson personId album.images
 
-                            maybePerson =
-                                getPerson personId album.people
-                        in
-                            if (personHasImage) then
-                                buildImageView
-                                    image
-                                    imagesInGallery
-                                    maybePerson
-                                    people
-                            else
-                                notFoundView
-
-                    Nothing ->
+                        maybePerson =
+                            getPerson personId album.people
+                    in
+                    if personHasImage then
                         buildImageView
                             image
-                            album.images
-                            Maybe.Nothing
+                            imagesInGallery
+                            maybePerson
                             people
+
+                    else
+                        notFoundView
+
+                Nothing ->
+                    buildImageView
+                        image
+                        album.images
+                        Maybe.Nothing
+                        people
 
         Nothing ->
             notFoundView
@@ -95,7 +106,7 @@ renderPeopleList people =
             [ text "People: " ]
         , span []
             (people
-                |> List.map (renderPerson)
+                |> List.map renderPerson
             )
         ]
 
@@ -106,15 +117,15 @@ renderPerson person =
         path =
             pathFor (PersonRoute person.id)
     in
-        a
-            [ href path ]
-            [ text person.name ]
+    a
+        [ href path ]
+        [ text person.name ]
 
 
 prevImage : Image -> List Image -> Maybe Image
 prevImage image gallery =
     gallery
-        |> List.filter (\img -> (img.id < image.id))
+        |> List.filter (\img -> img.id < image.id)
         |> List.reverse
         |> List.head
 
@@ -122,7 +133,7 @@ prevImage image gallery =
 nextImage : Image -> List Image -> Maybe Image
 nextImage image gallery =
     gallery
-        |> List.filter (\img -> (img.id > image.id))
+        |> List.filter (\img -> img.id > image.id)
         |> List.head
 
 
@@ -150,12 +161,12 @@ renderImageLink image maybePerson direction =
         Just person ->
             a
                 [ href (pathFor (PersonImageRoute image.id person.id)) ]
-                [ text (toString direction) ]
+                [ text (dirString direction) ]
 
         Nothing ->
             a
                 [ href (pathFor (ImageRoute image.id)) ]
-                [ text (toString direction) ]
+                [ text (dirString direction) ]
 
 
 notFoundView : Html msg

@@ -1,8 +1,8 @@
-module View exposing (..)
+module View exposing (errorView, loadingView)
 
-import Http
-import Html exposing (Html, div, text, program)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
+import Http
 
 
 loadingView : Html msg
@@ -16,4 +16,4 @@ errorView : Http.Error -> Html msg
 errorView err =
     div
         [ class "error" ]
-        [ text ("There was an error... " ++ (toString err)) ]
+        [ text "There was an error... " ]

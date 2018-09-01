@@ -1,6 +1,7 @@
-module Images.Models exposing (..)
+module Images.Models exposing (Album, Image, ImageId, ImagesContainerModel, ImgLayout, Layout, Person, PersonId)
 
-import Date exposing (Date)
+import Time exposing (Posix)
+
 
 
 -- Types
@@ -17,7 +18,7 @@ type alias PersonId =
 type alias Image =
     { id : ImageId
     , description : String
-    , dateAdded : Date
+    , dateAdded : Posix
     , thumbnail : String
     , fullsize : String
     , download : String

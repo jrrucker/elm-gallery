@@ -1,10 +1,10 @@
-module Page.Person exposing (Model, view, init, setLayout)
+module Page.Person exposing (Model, init, setLayout, view)
 
-import Html exposing (Html, text, div)
-import Images.Models exposing (PersonId, Layout, Album)
-import Interop exposing (OutMessage(..))
-import Images.Utils exposing (getImagesOfPerson)
+import Html exposing (Html, div, text)
 import Images.JustifiedView exposing (justifiedView)
+import Images.Models exposing (Album, Layout, PersonId)
+import Images.Utils exposing (getImagesOfPerson)
+import Interop exposing (OutMessage(..))
 import Routing
 
 
