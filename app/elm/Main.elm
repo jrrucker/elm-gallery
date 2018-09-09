@@ -1,24 +1,30 @@
-module Main exposing (..)
+module Main exposing (Model, Msg(..), init, loadAlbum, loadedUpdate, loadingUpdate, main, notFoundView, subscriptions, update, view)
 
-import Navigation exposing (Location)
-import View exposing (..)
+import Browser exposing (Document, UrlRequest(..), application)
+import Browser.Navigation as Nav exposing (Key)
 import Commands exposing (loadImages, loadPeople)
-import Routing exposing (Route, parseLocation)
-import RemoteData exposing (WebData, RemoteData(..))
 import Html exposing (Html, div, text)
-import Images.Models exposing (Image, Person, Album)
+import Images.Models exposing (Album, Image, Person)
 import Interop exposing (InMessage)
-import Task
 import Page exposing (Page, PageState)
+import RemoteData exposing (RemoteData(..), WebData)
+import Routing exposing (Route, parseLocation)
+import Task
+import Url exposing (Url)
+import Url.Parser exposing (parse, query)
+import Url.Parser.Query as Query
+import View exposing (..)
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Navigation.program (Routing.parseLocation >> OnRouteChange)
+    Browser.application
         { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
+        , onUrlRequest = ClickedLink
+        , onUrlChange = onUrlChange
         }
 
 
@@ -33,26 +39,27 @@ type alias Model =
     }
 
 
-init : Location -> ( Model, Cmd Msg )
-init location =
+init : () -> Url -> Key -> ( Model, Cmd Msg )
+init _ location key =
     let
         initialRoute =
             Routing.parseLocation location
 
-        albumPath =
-            case (String.split "=" location.search) of
-                [ "?album", name ] ->
-                    name
+        albumParser =
+            Query.string "album"
+                |> Query.map (Maybe.withDefault "")
+                |> query
 
-                _ ->
-                    ""
+        albumPath =
+            parse albumParser location
+                |> Maybe.withDefault ""
     in
-        ( { route = initialRoute
-          , album = Loading
-          , pageState = Page.initialState
-          }
-        , loadAlbum albumPath
-        )
+    ( { route = initialRoute
+      , album = Loading
+      , pageState = Page.initialState
+      }
+    , loadAlbum albumPath
+    )
 
 
 loadAlbum : String -> Cmd Msg
@@ -72,6 +79,12 @@ type Msg
     = OnRouteChange Route
     | AlbumLoaded (WebData Album)
     | JsMessage InMessage
+    | ClickedLink UrlRequest
+
+
+onUrlChange : Url -> Msg
+onUrlChange url =
+    OnRouteChange (Routing.parseLocation url)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -92,11 +105,19 @@ loadedUpdate msg model album =
                 ( newState, cmd ) =
                     Page.fromRoute model.pageState album route
             in
-                ( { model
-                    | pageState = newState
-                  }
-                , cmd
-                )
+            ( { model
+                | pageState = newState
+              }
+            , cmd
+            )
+
+        ClickedLink request ->
+            case request of
+                Internal url ->
+                    ( model, Nav.load (Url.toString url) )
+
+                External url ->
+                    ( model, Nav.load url )
 
         JsMessage jsMessage ->
             ( { model
@@ -119,12 +140,12 @@ loadingUpdate msg model =
                         ( newPageState, cmd ) =
                             Page.fromRoute model.pageState album model.route
                     in
-                        ( { model
-                            | pageState = newPageState
-                            , album = loadState
-                          }
-                        , cmd
-                        )
+                    ( { model
+                        | pageState = newPageState
+                        , album = loadState
+                      }
+                    , cmd
+                    )
 
                 _ ->
                     ( { model | album = loadState }
@@ -145,8 +166,8 @@ notFoundView =
         [ text "Page not found." ]
 
 
-view : Model -> Html Msg
-view model =
+body : Model -> Html Msg
+body model =
     div []
         [ case model.album of
             NotAsked ->
@@ -161,6 +182,13 @@ view model =
             Failure error ->
                 errorView error
         ]
+
+
+view : Model -> Document Msg
+view model =
+    { title = "Elm-Gallery"
+    , body = [ body model ]
+    }
 
 
 

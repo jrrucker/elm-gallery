@@ -1,8 +1,8 @@
-module Routing exposing (..)
+module Routing exposing (Route(..), matchers, parseLocation, pathFor)
 
-import Navigation exposing (Location)
-import UrlParser exposing (..)
 import Images.Models exposing (ImageId, PersonId)
+import Url exposing (Url)
+import Url.Parser exposing (..)
 
 
 type Route
@@ -23,9 +23,13 @@ matchers =
         ]
 
 
-parseLocation : Location -> Route
-parseLocation location =
-    parseHash matchers location
+parseLocation : Url -> Route
+parseLocation url =
+    let
+        location =
+            { url | path = url.fragment |> Maybe.withDefault "" }
+    in
+    parse matchers location
         |> Maybe.withDefault NotFoundRoute
 
 
@@ -33,13 +37,13 @@ pathFor : Route -> String
 pathFor route =
     case route of
         PersonRoute personId ->
-            "#/person/" ++ (toString personId)
+            "#/person/" ++ String.fromInt personId
 
         PersonImageRoute imageId personId ->
-            "#/person/" ++ (toString personId) ++ "/image/" ++ (toString imageId)
+            "#/person/" ++ String.fromInt personId ++ "/image/" ++ String.fromInt imageId
 
         ImageRoute imageId ->
-            "#/image/" ++ (toString imageId)
+            "#/image/" ++ String.fromInt imageId
 
         HomeRoute ->
             "#"

@@ -1,8 +1,8 @@
-module Page.Image exposing (Model, view, init)
+module Page.Image exposing (Model, init, view)
 
 import Html exposing (Html, text)
-import Images.Models exposing (ImageId, Album)
 import Images.ImageView exposing (imageView)
+import Images.Models exposing (Album, ImageId)
 
 
 type alias Model =

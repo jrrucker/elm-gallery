@@ -28,8 +28,8 @@ fetchImageList((urls) => {
         let albumText = JSON.stringify(albumData, null, 2);
         fs.writeFileSync(albumFile, albumText);
         fs.copyFileSync(peopleSourceFile, peopleFile);
-        console.log("Album created at http://localhost:3333/?album=gen_album");
-        console.log("Brunch rebuild may be needed if images look broken.");
+        console.log("Album created at http://localhost:1234/?album=gen_album");
+        console.log("Parcel restart required to refresh static assets.");
     });
 });
 

@@ -1,13 +1,13 @@
-module Page exposing (Page(..), PageState, fromRoute, jsUpdate, initialState, view)
+module Page exposing (Page(..), PageState, fromRoute, initialState, jsUpdate, view)
 
+import Html exposing (Html, div, text)
+import Images.Models exposing (Album, Layout)
+import Interop exposing (InMessage(..))
 import Page.Home as Home
-import Page.Person as Person
 import Page.Image as Image
+import Page.Person as Person
 import Page.PersonImage as PersonImage
 import Routing exposing (Route(..))
-import Images.Models exposing (Album, Layout)
-import Html exposing (Html, div, text)
-import Interop exposing (InMessage(..))
 
 
 type Page
@@ -52,22 +52,22 @@ fromRoute : PageState -> Album -> Route -> ( PageState, Cmd msg )
 fromRoute currentState album route =
     case route of
         HomeRoute ->
-            (Home.init album)
+            Home.init album
                 |> Tuple.mapFirst Home
                 |> Tuple.mapFirst (Transitioning (activePage currentState))
 
         PersonRoute personId ->
-            (Person.init album personId)
+            Person.init album personId
                 |> Tuple.mapFirst Person
                 |> Tuple.mapFirst (Transitioning (activePage currentState))
 
         ImageRoute imgId ->
-            (Image.init imgId)
+            Image.init imgId
                 |> Tuple.mapFirst Image
                 |> Tuple.mapFirst Loaded
 
         PersonImageRoute imgId personId ->
-            (PersonImage.init imgId personId)
+            PersonImage.init imgId personId
                 |> Tuple.mapFirst PersonImage
                 |> Tuple.mapFirst Loaded
 
@@ -90,7 +90,7 @@ jsUpdate msg pageState =
 
 view : PageState -> Album -> Html msg
 view pageState album =
-    case (activePage pageState) of
+    case activePage pageState of
         Home model ->
             Home.view album model
 

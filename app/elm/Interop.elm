@@ -1,9 +1,10 @@
-port module Interop exposing (send, recieve, InMessage(..), OutMessage(..))
+port module Interop exposing (InMessage(..), OutMessage(..), recieve, send)
 
-import Json.Encode as Encode exposing (Value)
-import Json.Decode as Decode exposing (decodeValue, Decoder)
-import Images.Models exposing (Image, Layout)
 import Commands exposing (encodeImage, layoutDecoder)
+import Images.Models exposing (Image, Layout)
+import Json.Decode as Decode exposing (Decoder, decodeValue)
+import Json.Encode as Encode exposing (Value)
+
 
 
 -- To JS
@@ -19,16 +20,15 @@ send message =
     let
         ( images, responseType ) =
             case message of
-                HomeGalleryDetails images ->
-                    ( images, "HomeLayout" )
+                HomeGalleryDetails homeImages ->
+                    ( homeImages, "HomeLayout" )
 
-                PersonGalleryDetails images ->
-                    ( images, "PersonLayout" )
+                PersonGalleryDetails personImages ->
+                    ( personImages, "PersonLayout" )
     in
-        List.map encodeImage images
-            |> Encode.list
-            |> encodeAs "GalleryDetails" responseType
-            |> toJs
+    Encode.list encodeImage images
+        |> encodeAs "GalleryDetails" responseType
+        |> toJs
 
 
 encodeAs : String -> String -> Value -> Value

@@ -1,7 +1,7 @@
-let layout = require('justified-layout');
+import layout from 'justified-layout';
 
 
-function handleElmMessage(message) {
+export default function handleElmMessage(message) {
     switch (message.type) {
         case 'GalleryDetails':
         return messageFor(message.responseType,
@@ -23,5 +23,3 @@ function messageFor(msgType, data) {
         data: data
     };
 }
-
-module.exports = handleElmMessage;
