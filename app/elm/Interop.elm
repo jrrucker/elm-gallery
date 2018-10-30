@@ -61,7 +61,6 @@ recieve msg =
     fromJs
         (\value ->
             decodeValue inMessageDecoder value
-                |> Debug.log "Parse Result"
                 |> Result.withDefault Unknown
                 |> msg
         )
