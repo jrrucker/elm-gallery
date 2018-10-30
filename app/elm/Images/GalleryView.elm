@@ -1,10 +1,17 @@
-module Images.GalleryView exposing (galleryView)
+module Images.GalleryView exposing (galleryView, personGallery)
 
 import Html exposing (Html, div, a, img, text)
 import Html.Attributes exposing (class, href, src, alt, title)
 import Routing exposing (Route(..), pathFor)
 import Images.Models exposing (..)
 import Images.Utils exposing (..)
+
+
+personGallery : PersonId -> List Image -> Html msg
+personGallery personId images =
+    images
+        |> List.map (cardView (Just personId))
+        |> buildGalleryView
 
 
 galleryView : Maybe PersonId -> Album -> Html msg

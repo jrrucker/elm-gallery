@@ -5,7 +5,8 @@ import Task exposing (Task)
 import Json.Decode as Decode
 import Json.Decode.Extra as DecodeExtra
 import Json.Decode.Pipeline exposing (decode, required)
-import Images.Models exposing (Image, Person, ImagesContainerModel)
+import Json.Encode as Encode
+import Images.Models exposing (Image, Person, ImagesContainerModel, Layout, ImgLayout)
 
 
 loadImages : String -> Task Http.Error (List Image)
@@ -47,3 +48,37 @@ imageDecoder =
         |> required "fullsize" Decode.string
         |> required "download" Decode.string
         |> required "people" (Decode.list Decode.int)
+        |> required "width" (Decode.int)
+        |> required "height" (Decode.int)
+
+
+encodeImage : Image -> Encode.Value
+encodeImage image =
+    Encode.object
+        [ ( "id", Encode.int image.id )
+        , ( "description", Encode.string image.description )
+        , ( "thumbnail", Encode.string image.thumbnail )
+        , ( "fullsize", Encode.string image.fullsize )
+        , ( "download", Encode.string image.download )
+        , ( "people", Encode.list <| List.map Encode.int image.people )
+        , ( "width", Encode.int image.width )
+        , ( "height", Encode.int image.height )
+        ]
+
+
+layoutDecoder : Decode.Decoder Layout
+layoutDecoder =
+    decode Layout
+        |> required "containerHeight" Decode.float
+        |> required "widowCount" Decode.int
+        |> required "boxes" (Decode.list imgLayoutDecoder)
+
+
+imgLayoutDecoder : Decode.Decoder ImgLayout
+imgLayoutDecoder =
+    decode ImgLayout
+        |> required "aspectRatio" Decode.float
+        |> required "top" Decode.float
+        |> required "left" Decode.float
+        |> required "width" Decode.float
+        |> required "height" Decode.float

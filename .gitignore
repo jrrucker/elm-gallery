@@ -4,3 +4,4 @@ public
 app/assets/gen_album
 app/assets/family
 app/assets/images.json
+*.swp
